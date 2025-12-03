@@ -16,7 +16,7 @@ public class GetTodosQueryHandler(IApplicationDbContext context) : IRequestHandl
                 Title = x.Title,
                 IsCompleted = x.IsCompleted,
                 DueDate = x.DueDate,
-                IsOverdue = x.DueDate < DateTime.UtcNow && !x.IsCompleted
+                IsOverdue = x.DueDate != null && x.DueDate.Value.Date < DateTime.UtcNow.Date && !x.IsCompleted
             });
 
         var paginatedList = await PaginatedList<TodoItemDto>.CreateAsync(query, request.PageNumber, request.PageSize);
