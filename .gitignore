@@ -1,0 +1,30 @@
+# VerbundPflegehilfe - .gitignore
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment Files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Docker
+docker-compose.override.yml
+
+# Build artifacts
+dist/
+build/
+out/

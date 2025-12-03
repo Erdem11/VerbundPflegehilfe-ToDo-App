@@ -1,0 +1,91 @@
+# ==============================================
+# VerbundPflegehilfe - Full Stack Docker Compose
+# Runs Backend + Frontend + Database together
+# ==============================================
+
+services:
+  # SQL Server Database
+  sqlserver:
+    container_name: verbundpflegehilfe-sqlserver
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1438:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${DB_SA_PASSWORD:-Pass@word123!}
+      - MSSQL_PID=Developer
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - verbundpflegehilfe-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P $${MSSQL_SA_PASSWORD} -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # .NET Backend API
+  backend:
+    container_name: verbundpflegehilfe-backend
+    build:
+      context: ./backend/src
+      dockerfile: VerbundPflegehilfe.API/Dockerfile
+      args:
+        BUILD_CONFIGURATION: ${BUILD_CONFIGURATION:-Release}
+    ports:
+      - "7150:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=VerbundPflegehilfe;User Id=sa;Password=${DB_SA_PASSWORD:-Pass@word123!};TrustServerCertificate=True;
+      - Cors__AllowedOrigins__0=http://localhost:5173
+      - Cors__AllowedOrigins__1=http://localhost:3000
+      - Cors__AllowedOrigins__2=http://frontend:80
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - verbundpflegehilfe-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/api/todos || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  # React Frontend (Production Build)
+  frontend:
+    container_name: verbundpflegehilfe-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: "${VITE_API_BASE_URL:-http://localhost:7150/api}"
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - verbundpflegehilfe-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost/health || exit 1"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+# Persistent Data Volumes
+volumes:
+  sqlserver-data:
+    driver: local
+    name: verbundpflegehilfe-sqlserver-data
+
+# Custom Network for Service Communication
+networks:
+  verbundpflegehilfe-network:
+    driver: bridge
+    name: verbundpflegehilfe-network

@@ -1,0 +1,10 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+.idea/.idea.VerbundPflegehilfe/.idea/
+
+*.user
+
+src/VerbundPflegehilfe.API/appsettings.Development.json
