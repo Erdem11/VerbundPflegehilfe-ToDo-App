@@ -15,7 +15,7 @@ public class TodosControllerTests(CustomWebApplicationFactory<Program> factory) 
     public async Task Create_Should_Return_Ok_And_Succeeded_Result_When_Valid()
     {
         // Arrange
-        var command = new CreateTodoCommand("Integration Test Task Long Enough", DateTime.Now.AddDays(1));
+        var command = new CreateTodoCommand("Integration Test Task Long Enough", DateTime.UtcNow.AddDays(1));
 
         // Act
         var response = await _client.PostAsJsonAsync("/api/todos", command);
@@ -35,7 +35,7 @@ public class TodosControllerTests(CustomWebApplicationFactory<Program> factory) 
     public async Task Create_Should_Return_BadRequest_With_Failure_Result_When_Validation_Fails()
     {
         // Arrange: Short title to trigger validation error
-        var command = new CreateTodoCommand("Short", DateTime.Now.AddDays(1));
+        var command = new CreateTodoCommand("Short", DateTime.UtcNow.AddDays(1));
 
         // Act
         var response = await _client.PostAsJsonAsync("/api/todos", command);
@@ -88,7 +88,7 @@ public class TodosControllerTests(CustomWebApplicationFactory<Program> factory) 
     public async Task MarkAsDone_Should_Update_IsCompleted_To_True()
     {
         // Arrange
-        var createCommand = new CreateTodoCommand("Task To Complete", DateTime.Now.AddDays(1));
+        var createCommand = new CreateTodoCommand("Task To Complete", DateTime.UtcNow.AddDays(1));
         var createResponse = await _client.PostAsJsonAsync("/api/todos", createCommand);
         var createResult = await createResponse.Content.ReadFromJsonAsync<Result<Guid>>();
         var todoId = createResult!.Data;
@@ -114,7 +114,7 @@ public class TodosControllerTests(CustomWebApplicationFactory<Program> factory) 
     public async Task Delete_Should_Remove_Item_From_Database()
     {
         // Arrange
-        var createCommand = new CreateTodoCommand("Task To Delete", DateTime.Now.AddDays(1));
+        var createCommand = new CreateTodoCommand("Task To Delete", DateTime.UtcNow.AddDays(1));
         var createResponse = await _client.PostAsJsonAsync("/api/todos", createCommand);
         var createResult = await createResponse.Content.ReadFromJsonAsync<Result<Guid>>();
         var todoId = createResult!.Data;

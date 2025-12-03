@@ -14,7 +14,7 @@ public class MarkTodoAsDoneCommandHandlerTests
     {
         // Arrange
         var todoId = Guid.NewGuid();
-        var todoItem = new TodoItem("Test Task", DateTime.Now);
+        var todoItem = new TodoItem("Test Task", DateTime.UtcNow);
 
         var mockSet = new Mock<DbSet<TodoItem>>();
         var mockContext = new Mock<IApplicationDbContext>();

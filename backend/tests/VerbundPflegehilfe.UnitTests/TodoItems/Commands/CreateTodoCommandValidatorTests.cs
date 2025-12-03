@@ -11,7 +11,7 @@ public class CreateTodoCommandValidatorTests
     public void Should_Have_Error_When_Title_Is_Too_Short()
     {
         // Arrange
-        var command = new CreateTodoCommand("Short", DateTime.Now);
+        var command = new CreateTodoCommand("Short", DateTime.UtcNow);
 
         // Act
         var result = _validator.TestValidate(command);
@@ -25,7 +25,7 @@ public class CreateTodoCommandValidatorTests
     public void Should_Not_Have_Error_When_Title_Is_Valid()
     {
         // Arrange
-        var command = new CreateTodoCommand("This is a sufficiently long title", DateTime.Now);
+        var command = new CreateTodoCommand("This is a sufficiently long title", DateTime.UtcNow);
 
         // Act
         var result = _validator.TestValidate(command);

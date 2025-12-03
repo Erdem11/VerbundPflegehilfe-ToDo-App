@@ -43,9 +43,9 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         }
 
         context.TodoItems.AddRange(
-        new TodoItem("Learn Clean Architecture", DateTime.Now.AddDays(1)),
-        new TodoItem("Submit the Case Study", DateTime.Now.AddDays(2)),
-        new TodoItem("This is an Overdue Task", DateTime.Now.AddDays(-1))
+        new TodoItem("Learn Clean Architecture", DateTime.UtcNow.AddDays(1)),
+        new TodoItem("Submit the Case Study", DateTime.UtcNow.AddDays(2)),
+        new TodoItem("This is an Overdue Task", DateTime.UtcNow.AddDays(-1))
         );
 
         await context.SaveChangesAsync();

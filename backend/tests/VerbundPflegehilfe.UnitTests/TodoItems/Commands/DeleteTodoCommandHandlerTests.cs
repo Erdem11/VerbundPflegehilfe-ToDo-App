@@ -14,7 +14,7 @@ public class DeleteTodoCommandHandlerTests
     {
         // Arrange
         var todoId = Guid.NewGuid();
-        var todoItem = new TodoItem("Task to Delete", DateTime.Now);
+        var todoItem = new TodoItem("Task to Delete", DateTime.UtcNow);
 
         var mockSet = new Mock<DbSet<TodoItem>>();
         var mockContext = new Mock<IApplicationDbContext>();

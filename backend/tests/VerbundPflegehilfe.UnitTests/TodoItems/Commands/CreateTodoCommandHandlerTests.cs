@@ -19,7 +19,7 @@ public class CreateTodoCommandHandlerTests
         mockContext.Setup(m => m.TodoItems).Returns(mockSet.Object);
 
         var handler = new CreateTodoCommandHandler(mockContext.Object);
-        var command = new CreateTodoCommand("Test Task Title", DateTime.Now.AddDays(1));
+        var command = new CreateTodoCommand("Test Task Title", DateTime.UtcNow.AddDays(1));
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
